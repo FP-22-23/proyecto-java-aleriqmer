@@ -1,7 +1,8 @@
 package fp.trabajos;
 
 import java.time.LocalDate;
-import java.sql.Time;
+import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,14 +18,14 @@ public class Trabajo implements Comparable<Trabajo> {
 	private Double Cantidad_pagada;
 	private Boolean Trabajo_completado;
 	private LocalDate Fecha_inicio;
-	private Time Hora_inicio;
+	private LocalTime Hora_inicio;
 	private CategoriaTrabajo Categoria;
 	
 	//Constructores
 	//Completo
 	public Trabajo(Integer Numero_solicitud, String Resumen, String Nombre_organizacion, 
 			Integer Duracion_horas, Double Cantidad_pagada, Boolean Trabajo_completado, 
-			LocalDate Fecha_inicio, Time Hora_inicio, CategoriaTrabajo Categoria, List<String> Cualidades_buscadas) {
+			LocalDate Fecha_inicio, LocalTime Hora_inicio, CategoriaTrabajo Categoria, List<String> Cualidades_buscadas) {
 		
 		//Restricciones 
 		Checkers.check("La duracion no puede ser menor de 1", Duracion_horas > 0);
@@ -60,6 +61,13 @@ public class Trabajo implements Comparable<Trabajo> {
 		this.Fecha_inicio=Fecha_inicio;
 		this.Hora_inicio=Hora_inicio;
 		this.Categoria=Categoria;
+	}
+	
+	public Trabajo(Integer Numero_solicitud, String Resumen, String Nombre_organizacion, 
+			Integer Duracion_horas, Double Cantidad_pagada, Boolean Trabajo_completado, 
+			LocalDate Fecha_inicio, LocalTime Hora_inicio, CategoriaTrabajo Categoria, String Cualidades_buscadas) {
+		this(Numero_solicitud, Resumen, Nombre_organizacion, Duracion_horas, Cantidad_pagada, Trabajo_completado,
+				Fecha_inicio, Hora_inicio, Categoria, Arrays.asList(Cualidades_buscadas.split(", ")));
 	}
 	
 	//Constructor resumen pago
@@ -135,11 +143,11 @@ public class Trabajo implements Comparable<Trabajo> {
 			Fecha_inicio = fecha_inicio;
 		}
 
-		public Time getHora_inicio() {
+		public LocalTime getHora_inicio() {
 			return Hora_inicio;
 		}
 
-		public void setHora_inicio(Time hora_inicio) {
+		public void setHora_inicio(LocalTime hora_inicio) {
 			Hora_inicio = hora_inicio;
 		}
 
@@ -161,7 +169,7 @@ public class Trabajo implements Comparable<Trabajo> {
 						return Mal_remunerado; }
 		}
 		
-		//Presentacion como cadena (segundo constructor)
+		//Presentacion como cadena (segundo todas las propiedades)
 		@Override
 		public String toString() {
 			return "Trabajo [Numero_solicitud = " + Numero_solicitud + ", Resumen = " + Resumen + ", Nombre de la organizacion = " + Nombre_organizacion +
@@ -170,7 +178,7 @@ public class Trabajo implements Comparable<Trabajo> {
 					", Categoria del trabajo = " + Categoria + "]";
 		}
 		
-		//Presentacion como cadena (toString todas las propiedades)
+		//Presentacion como cadena (toString segundo constructor)
 		public String toString_constructor2() {
 			return "Trabajo [Resumen = " + Resumen + ", Categoria del trabajo = " + Categoria + ", Cantidad pagada = " + Cantidad_pagada + 
 					", Horas de duracion = " + Duracion_horas + "]";

@@ -64,5 +64,45 @@ Representa el conjunto de datos de un trabajo determinado.
 
 **Criterio de ordenacion**: Por el resumen del trabajo, el nombre de la organizacion y la cantidad pagada.
 
-### Tipos auxiliares
-Aun no ha sido añadido ningun tipo auxiliar.
+####**Tipos auxiliares**:
+- **CategoriaTrabajo**: enumerado. Puede tomar los valores StrengtheningCommunities, Education, HelpingNeighborsinNeed, Environment, Health.
+ 
+### Factoria - FactoriaEstrella
+Clase de factoria para construir objetos de tipo Trabajo.
+ 
+ * **leeTrabajo(String fichero)**: Crea un objeto de tipo Trabajo a partir de la informacion recogida en el archivo csv, cuya ruta se da como parametro.
+
+### Tipo Contenedor - ContenedorDatos
+Clase contenedora de los objetos de tipo Estrella.
+
+**Propiedades**:
+- *Numero_solicitudes*, de tipo Integer, consultable. 
+- *Resumen*, de tipo String, consultable. 
+- *Categoria*, de tipo CategoriaTrabajo, consultable.
+- *Nombre_organizacion*, de tipo String, consultable.
+- *Fecha_inicio*, de tipo Localdate, consultable y modificable.
+- *Hora_inicio*, de tipo Time, consultable y modificable.
+- *Cantidad_pagada*, de tipo Double, consultable y modificable.
+- *Duracion_horas*, de tipo Integer, consultable y modificable.
+- *Trabajo_completado*, de tipo Boolean, consultable y modificable.
+- *Cualidades_buscadas*, de tipo List, consultable y modificable.
+- *Trabajos*, de tipo List, consultable y modificable.
+
+**Constructores**: 
+- C1: Tiene un parametro por cada propiedad basica del tipo.
+- C2: crea un objeto con los mismas propiedades que C1 añadiendo `List<String> Trabajos`.
+
+**Criterio de igualdad**: Por el resumen del trabajo, el nombre de la organizacion y el numero de solicitudes presentadas.
+
+**Otras operaciones**: 
+
+- **void NumTrabajos**: Obtiene el numero de Trabajos del objeto.
+- **void incorporaTrabajo(Trabajo p)**: Añade un Trabajo al objeto
+- **void incorporaTrabajos(List<Trabajo> totalTrabajos):**  añade una lista de Trabajos al objeto.
+- **void eliminaTrabajos(Trabajo c)**: Elimina el Trabajo del objeto.
+
+- **Boolean existeOrganizacionConSiguienteNombre(String nombre)**: Devuelve true si existe alguna organizacion con el nombre indicado, false si no existe.
+- **Integer getNumeroTrabajosMasDe6Horas()**: Devuelve una lista con el resumen de todos los trabajos que duran mas de 6 horas.
+- **List<Trabajo> getTrabajosPorCategoria(CategoriaTrabajo Categoria)**: devuelve una lista con los datos de los trabajos recogidos en la lista inicial que sean de la categoria dada.
+- **Map<Integer,List<Trabajo>> agrupaTrabajosPorNumSol(Integer solicitud)**: devuelve un map que agrupa los trabajos segun el numero de solicitudes presentadas.
+- **Map<CategoriaTrabajo,Long> getNumeroTrabajosPorCategoria()**: devuelve un mapa en el que las claves son los distintos posibles valores del tipo Categoria y el valor de cada clave es el numero de Trabajos que corresponden a la misma.
