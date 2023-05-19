@@ -1,5 +1,6 @@
 package fp.trabajos;
 
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -9,7 +10,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import fp.utiles.Checkers;
 import fp.utiles.Ficheros;
@@ -22,7 +23,6 @@ public class FactoriaTrabajo {
 		
 		String [] trozos = lineaCSV.split(";");
 		
-		System.out.println(trozos.length);
 		Checkers.check("Formato incorrecto", trozos.length == 10);
 		
 		Integer Numero_solicitudes = Integer.parseInt(trozos[0].trim());
@@ -34,7 +34,7 @@ public class FactoriaTrabajo {
 		LocalDate Fecha_inicio = LocalDate.parse(trozos[6].trim(), 
 				DateTimeFormatter.ofPattern("MM/dd/yyyy"));
 		LocalTime Hora_inicio = LocalTime.parse(trozos[7].trim(),
-				DateTimeFormatter.ofPattern("HH:mm"));
+				DateTimeFormatter.ofPattern("HH:mm:ss"));
 		CategoriaTrabajo Categoria = CategoriaTrabajo.valueOf(trozos[8].trim());
 		String Cualidades_buscadas = trozos[9].trim();
 		
@@ -54,20 +54,20 @@ public class FactoriaTrabajo {
 		return res;
 	}
 	
+	
 	//LecturaCSV
 	//Dada la ruta de un fichero CSV devuelve lista de objetos de tipo base
-
-	public static List<Trabajo> leeTrabajo(String fichero){
-		Checkers.checkNoNull(fichero);
-
-		List<String> lineas = Ficheros.leeFichero("Error leyendo fichero",
-				fichero, StandardCharsets.UTF_8);
-		lineas.remove(0); // Quitar cabecera del csv
-		List<Trabajo> res = new ArrayList<Trabajo>();
-		for(String linea: lineas) {
-			Trabajo p = parsearTrabajo(linea);
-			res.add(p);
+	public static ContenedorDatos leeTrabajo(String fichero) {
+		ContenedorDatos res=null;
+		try {
+			Stream<Trabajo>datos=Files.lines(Paths.get(fichero))
+					.skip(1)
+					.map(FactoriaTrabajo::parsearTrabajo);
+			 res= new ContenedorDatos(datos);
+			} catch(IOException e) {
+			System.out.println("Fichero no encontrado: "+fichero);
+			e.printStackTrace();
 		}
-		return res;
+	return res;
 	}
 }

@@ -67,7 +67,7 @@ Representa el conjunto de datos de un trabajo determinado.
 ####**Tipos auxiliares**:
 - **CategoriaTrabajo**: enumerado. Puede tomar los valores StrengtheningCommunities, Education, HelpingNeighborsinNeed, Environment, Health.
  
-### Factoria - FactoriaEstrella
+### Factoria - FactoriaTrabajo
 Clase de factoria para construir objetos de tipo Trabajo.
  
  * **leeTrabajo(String fichero)**: Crea un objeto de tipo Trabajo a partir de la informacion recogida en el archivo csv, cuya ruta se da como parametro.
@@ -101,8 +101,19 @@ Clase contenedora de los objetos de tipo Estrella.
 - **void incorporaTrabajos(List<Trabajo> totalTrabajos):**  añade una lista de Trabajos al objeto.
 - **void eliminaTrabajos(Trabajo c)**: Elimina el Trabajo del objeto.
 
-- **Boolean existeOrganizacionConSiguienteNombre(String nombre)**: Devuelve true si existe alguna organizacion con el nombre indicado, false si no existe.
-- **Integer getNumeroTrabajosMasDe6Horas()**: Devuelve una lista con el resumen de todos los trabajos que duran mas de 6 horas.
-- **List<Trabajo> getTrabajosPorCategoria(CategoriaTrabajo Categoria)**: devuelve una lista con los datos de los trabajos recogidos en la lista inicial que sean de la categoria dada.
+- **Boolean existeTrabajoEnFecha(LocalDate fecha)**: Devuelve true si existe algun trabajo realizado en la fecha dada, false si no existe.
+- **Integer NumeroTrabajosMasDe6Horas()**: Devuelve una lista con el resumen de todos los trabajos que duran mas de 6 horas.
+- **List<Trabajo> TrabajosTerminadosPorCualidades(List<String> cualidades)**: devuelve una lista con los datos de los trabajos que precisen de las cualidades introducidas con la condicion de que sea un trabajo finalizado.
 - **Map<Integer,List<Trabajo>> agrupaTrabajosPorNumSol(Integer solicitud)**: devuelve un map que agrupa los trabajos segun el numero de solicitudes presentadas.
-- **Map<CategoriaTrabajo,Long> getNumeroTrabajosPorCategoria()**: devuelve un mapa en el que las claves son los distintos posibles valores del tipo Categoria y el valor de cada clave es el numero de Trabajos que corresponden a la misma.
+- **Map<CategoriaTrabajo,Integer> getNumeroTrabajosPorCategoria()**: devuelve un mapa en el que las claves son los distintos posibles valores del tipo Categoria y el valor de cada clave es el numero de Trabajos que corresponden a la misma.
+
+- **public boolean existeTrabajoEnFechaStreams(LocalDate fecha)**: Devuelve true si existe algun trabajo realizado en la fecha dada, false si no existe. 
+- **public int numeroTrabajosMasDe6HorasStreams()**: Devuelve una lista con el resumen de todos los trabajos que duran mas de 6 horas.
+- **public List<Trabajo> TrabajosTerminadosPorCualidadesStreams(List<String> cualidades)**: devuelve una lista con los datos de los trabajos que precisen de las cualidades introducidas con la condicion de que sea un trabajo finalizado.
+- **public Trabajo obtenerTrabajoFinalizadoMejorPagado()**: se muestran los datos del trabajo que ha sido remunerado con la mayor cantidad.
+- **public List<Trabajo> obtenerTrabajosDuracion8HorasOrdenadosPorCantidadPagada()**: Se muestran todos los trabajos que han durado 8 horas ordenados de menor a mayor cantidad pagada.
+- **public Map<CategoriaTrabajo, Integer> numeroTrabajosPorCategoriaStreams()**: Se muestra un diccionario en el que las claves son los distintos tipos de trabajos y las claves son el numero de trabajos de cada tipo.
+- **public Map<Integer, Double> obtenerCantidadPagadaPorSolicitudes()**: Se muestra un diccionario en el que las claves son el numero de solicitudes que han recibido los trabajos y los valores son las distintas cantidades pagadas.
+- **public Map<CategoriaTrabajo, Double> obtenerTrabajosMejorPagadosPorTipo()**: Se muestra un diccionario en el que las claves son los distintos tipos de los trabajos y los valores son la mayor cantidad pagada en cada uno.
+- **public SortedMap<CategoriaTrabajo, List<String>> obtenerTrabajosMenosSolicitadosPorTipo()**: Se muestra un diccionario en el que las claves son los distintos tipos de los trabajos y los valores son los datos de los trabajos que han sido solicitados menos de 10 veces.
+- **public Map<CategoriaTrabajo, Integer> obtenerTrabajoResumenMayorPorTipo()**: Se muestra un diccionario donde se muestra una clave y su valor, la clave es el tipo de trabajo y el valor son los datos del trabajo con mayor numero de caracteres en su resumen.

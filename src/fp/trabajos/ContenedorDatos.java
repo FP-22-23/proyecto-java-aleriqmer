@@ -4,15 +4,36 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import fp.utiles.Checkers;
 
 public class ContenedorDatos {
+	
+	private List <Trabajo> trabajo;
+
+	public ContenedorDatos() {
+		this.trabajo = new ArrayList<> ();
+	}
+	public ContenedorDatos (Collection <Trabajo> jugador) {
+		this.trabajo = new ArrayList <>(jugador);
+	}
+	public ContenedorDatos (Stream <Trabajo> stream) {
+		this.trabajo = stream.collect(Collectors.toList());
+	}
+	
 	//Atributos
 	private Integer Numero_solicitud;
 	private String Resumen;
@@ -149,39 +170,39 @@ public class ContenedorDatos {
     
     //Añadir un elemento
     public void incorporaTrabajo(Trabajo p){
-    	this.Trabajos.add(p);
+    	this.trabajo.add(p);
     }
 
     //Añadir una coleccion de elementos
     public void incorporaTrabajos(List<Trabajo> totalTrabajos){
-        this.Trabajos.addAll(totalTrabajos);
+        this.trabajo.addAll(totalTrabajos);
     }
         
     //Eliminar un elemento
-    public void eliminaTrabajos(Trabajo c){
-    	this.Trabajos.remove(c);
-    }
+	public void eliminaTrabajos(Trabajo c) {
+		if(!trabajo.contains(c)) {
+			throw new IllegalArgumentException("El Trabajo buscado no existe");
+		}else {
+			trabajo.remove(c);
+		}	
+	}
     
     //Tratamientos secuenciales
     
     //Existe
-    public Boolean existeOrganizacionConSiguienteNombre(String nombre) {
-		Boolean res = false;
-		for(Trabajo c: this.Trabajos) {
-			String[] palabras = c.getNombre_organizacion().toUpperCase().split(" ");
-			if(Arrays.asList(palabras).contains(nombre.toUpperCase())) {
-				res = true;
-				break;
-			}
-		}
-		
-		return res;	
-    }
+	public boolean existeTrabajoEnFecha(LocalDate fecha) {
+	    for (Trabajo c : trabajo) {
+	        if (c.getFecha_inicio().equals(fecha)) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
     
 	//Contador
-	public Integer getNumeroTrabajosMasDe6Horas() {
+	public Integer NumeroTrabajosMasDe6Horas() {
 		Integer res = 0;
-		for(Trabajo c: this.Trabajos) {
+		for(Trabajo c: trabajo) {
 			if(c.getDuracion_horas()>6) {
 				res++;
 			}
@@ -190,14 +211,16 @@ public class ContenedorDatos {
 	}
 	
     //Filtro
-  	public List<Trabajo> getTrabajosPorCategoria(CategoriaTrabajo Categoria){
-		List<Trabajo> res = new LinkedList<Trabajo>();
-		for(Trabajo c: this.Trabajos) {
-			if(c.getCategoria().equals(Categoria)) {
-				res.add(c);
-			}
-		}
-		return res;
+	public List<Trabajo> TrabajosTerminadosPorCualidades(List<String> cualidades) {
+	    List<Trabajo> res = new ArrayList<>();
+
+	    for (Trabajo c : trabajo) {
+	        if (cualidades.containsAll(c.getCualidades_buscadas()) && c.getTrabajo_completado()) {
+	            res.add(c);
+	        }
+	    }
+
+	    return res;
 	}
   	
   	//Map 1
@@ -206,7 +229,7 @@ public class ContenedorDatos {
   		//Creamos un mapa
   		Map<Integer,List<Trabajo>> res = new HashMap<>();
   		//Iteramos sobre los trabajos
-  		for(Trabajo c:Trabajos) {
+  		for(Trabajo c:trabajo) {
   			if(c.getNumero_solicitud().equals(solicitud)) {
   				//Recuperamos/Calculamos la clave
   				Integer num = c.getNumero_solicitud();
@@ -224,20 +247,164 @@ public class ContenedorDatos {
   	
   	//Map 2
   	
-	public Map<CategoriaTrabajo,Long> getNumeroTrabajosPorCategoria(){
+	public Map<CategoriaTrabajo,Integer> NumeroTrabajosPorCategoria(){
 		//Creamos un mapa
-		Map<CategoriaTrabajo,Long> res = new HashMap<>();
+		Map<CategoriaTrabajo,List<String>> res = new HashMap<>();
+		//Segundo mapa pero con valores integer
+		Map<CategoriaTrabajo,Integer> res2 = new HashMap<>();
 		//Iteramos sobre los trabajos
-		for(Trabajo c:Trabajos) {
-			CategoriaTrabajo clave = c.getCategoria();
-				if(res.containsKey(clave)) {
-					res.put(clave,res.get(clave)+1);
-				}else {
-					res.put(clave,res.get(clave));
-				}
+		for(Trabajo c:trabajo) {
+			if (!res.containsKey(c.getCategoria())) {
+				List<String> nombres = new ArrayList<>();
+				nombres.add(c.getResumen());
+				res.put(c.getCategoria(), nombres);
+			} else {
+				res.get(c.getCategoria()).add(c.getResumen());
+			}
+			res2.put(c.getCategoria(),res.get(c.getCategoria()).size());
 		}
-		return res;
+		return res2;
 	}
+	
+	//Existe con streams
+	
+	public boolean existeTrabajoEnFechaStreams(LocalDate fecha) {
+	    return trabajo.stream()
+	            .anyMatch(c -> c.getFecha_inicio().equals(fecha));
+	}
+	
+	//Contador con streams
+	
+	public int numeroTrabajosMasDe6HorasStreams() {
+	    return (int) trabajo.stream()
+	        .filter(c -> c.getDuracion_horas() > 6)
+	        .count();
+	}
+	
+	//Filtro con streams
+	
+	public List<Trabajo> TrabajosTerminadosPorCualidadesStreams(List<String> cualidades) {
+	    return trabajo.stream()
+	            .filter(c -> cualidades.containsAll(c.getCualidades_buscadas()) && c.getTrabajo_completado())
+	            .collect(Collectors.toList());
+	}
+	
+	//Maximo minimo con filtrado
+	
+	public Trabajo obtenerTrabajoFinalizadoMejorPagado() {
+	    List<Trabajo> res = new ArrayList<>();
+	    for (Trabajo c : trabajo) {
+	        if (c.getTrabajo_completado().equals(true)) {
+	        	res.add(c);
+	        }
+	    }
+
+	    if (res.isEmpty()) {
+	        return null;
+	    }
+
+	    Trabajo res2 = Collections.max(res, Comparator.comparing(Trabajo::getCantidad_pagada));
+	    return res2;
+	}
+	//Seleccion con filtrado y ordenacion
+	
+	public List<Trabajo> obtenerTrabajosDuracion8HorasOrdenadosPorCantidadPagada() {
+	    List<Trabajo> res = new ArrayList<>();
+	    for (Trabajo c : trabajo) {
+	        if (c.getDuracion_horas() == 8) {
+	            res.add(c);
+	        }
+	    }
+
+	    res.sort(Comparator.comparing(Trabajo::getCantidad_pagada));
+
+	    return res;
+	}
+	
+	//Map 2 con streams
+	
+	public Map<CategoriaTrabajo, Integer> numeroTrabajosPorCategoriaStreams() {
+	    return trabajo.stream()
+	        .collect(Collectors.groupingBy(Trabajo::getCategoria, Collectors.summingInt(c -> 1)));
+	}
+	
+	//Collector
+
+	public Map<Integer, List<Double>> obtenerCantidadPagadaPorSolicitudes() {
+	    return trabajo.stream()
+	            .collect(Collectors.groupingBy(
+	                    Trabajo::getNumero_solicitud,
+	                    Collectors.mapping(Trabajo::getCantidad_pagada, Collectors.toList())
+	            ));
+	}
+	
+    //Map maximo
+	
+    public Map<CategoriaTrabajo, Double> obtenerTrabajosMejorPagadosPorTipo() {
+        Map<CategoriaTrabajo, Double> res = new HashMap<>();
+
+        for (Trabajo c : trabajo) {
+            CategoriaTrabajo tipoTrabajo = c.getCategoria();
+            double cantidadPagada = c.getCantidad_pagada();
+
+            if (!res.containsKey(tipoTrabajo)) {
+                res.put(tipoTrabajo, cantidadPagada);
+            } else {
+                double maxCantidadPagada = res.get(tipoTrabajo);
+                if (cantidadPagada > maxCantidadPagada) {
+                    res.put(tipoTrabajo, cantidadPagada);
+                }
+            }
+        }
+
+        return res;
+    }
+    
+    //Map los trabajos de cada categoria que tengan menos de 10 solicitudes
+    
+    public SortedMap<CategoriaTrabajo, List<String>> obtenerTrabajosMenosSolicitadosPorTipo() {
+        SortedMap<CategoriaTrabajo, List<String>> res = new TreeMap<>();
+
+        for (Trabajo c : trabajo) {
+            CategoriaTrabajo tipoTrabajo = c.getCategoria();
+            int numSolicitudes = c.getNumero_solicitud();
+            String resumen = c.getResumen();
+
+            if (numSolicitudes < 10) {
+                res.computeIfAbsent(tipoTrabajo, k -> new ArrayList<>()).add(resumen);
+            }
+        }
+
+        return res;
+    }
+    
+    //Map clave-valor maximo
+    
+    public Map<CategoriaTrabajo, Integer> obtenerTrabajoResumenMayorPorTipo() {
+        Map<CategoriaTrabajo, Integer> res = new HashMap<>();
+
+        for (Trabajo c : this.trabajo) {
+            CategoriaTrabajo tipoTrabajo = c.getCategoria();
+            int numLetras = c.getResumen().length();
+
+            res.put(tipoTrabajo, Math.max(res.getOrDefault(tipoTrabajo, 0), numLetras));
+        }
+        
+        Map.Entry<CategoriaTrabajo, Integer> maxEntry = null;
+        for (Map.Entry<CategoriaTrabajo, Integer> entry : res.entrySet()) {
+            if (maxEntry == null || entry.getValue() > maxEntry.getValue()) {
+                maxEntry = entry;
+            }
+        }
+
+        if (maxEntry != null) {
+            Map<CategoriaTrabajo, Integer> result = new HashMap<>();
+            result.put(maxEntry.getKey(), maxEntry.getValue());
+            return result;
+        } else {
+            return Collections.emptyMap();
+        }
+    }
 }
 
 

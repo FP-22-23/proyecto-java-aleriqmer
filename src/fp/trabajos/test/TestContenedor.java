@@ -12,76 +12,139 @@ import fp.trabajos.Trabajo;
 public class TestContenedor {
 	
 		public static void main(String[] args) {
-			List<Trabajo> Trabajos = FactoriaTrabajo.leeTrabajo("./data/dataset_NY.csv");}
-		ContenedorDatos T1 = new ContenedorDatos(5, "Help us set up a new training classroom to teach young adults personal finance!",
-				"Cents Ability, Inc.", 7, 167.28, false, LocalDate.of(2021, 12, 23), LocalTime.of(9,28),
-				CategoriaTrabajo.StrengtheningCommunities, List.of("seriedad, comprensividad, serenidad"));
-		ContenedorDatos T2 = new ContenedorDatos(5, "Mentor homeless children between the ages of 2 to 12 at our weekend enrichment program.",
-				"Cents Ability, Inc.", 7, 167.28, false, LocalDate.of(2021, 12, 23), LocalTime.of(9,28),
-				CategoriaTrabajo.StrengtheningCommunities, List.of("seriedad, comprensividad, serenidad"));
-		
-		private static void testNumTrabajos(ContenedorDatos T1) {
-		System.out.println("El numero de Trabajos es el siguiente: "+ T1.NumTrabajos());
+			ContenedorDatos Trabajos = FactoriaTrabajo.leeTrabajo("./data/dataset_NY.csv");
+			
+			//Test operaciones
+			testexisteTrabajoEnFecha(Trabajos, LocalDate.of(2022, 06, 02));
+			testNumeroTrabajosMasDe6Horas(Trabajos);
+			testTrabajosTerminadosPorCualidades(Trabajos, List.of("seriedad", "comprensividad","serenidad"));
+			testagrupaTrabajosPorNumSol(Trabajos, 10);
+			testNumeroTrabajosPorCategoria(Trabajos);
+			
+			testexisteTrabajoEnFechaStreams(Trabajos, LocalDate.of(2022, 06, 02));
+			testNumeroTrabajosMasDe6HorasStreams(Trabajos);
+			testTrabajosTerminadosPorCualidadesStreams(Trabajos, List.of("seriedad", "comprensividad","serenidad"));
+			testobtenerTrabajoFinalizadoMejorPagado(Trabajos);
+			testobtenerTrabajosDuracion8HorasOrdenadosPorCantidadPagada(Trabajos);
+			
+			testNumeroTrabajosPorCategoriaStreams(Trabajos);
+			testobtenerCantidadPagadaPorSolicitudes(Trabajos);
+			testobtenerTrabajosMejorPagadosPorTipo(Trabajos);
+			testobtenerTrabajosMenosSolicitadosPorTipo(Trabajos);
+			testobtenerTrabajoResumenMayorPorTipo(Trabajos);
+			
+			
+			
 		}
-		
-		private static void testincorporaTrabajo(ContenedorDatos T1) {
-		System.out.println("Se ha añadido el elemento T2: "+ T1.incorporaTrabajo(T2));
-		}
-		
-		private static void testeliminaTrabajos(ContenedorDatos T1) {
-		System.out.println("Se ha eliminado el elemento T2: "+ T1.eliminaTrabajos(T2));
-		}
-		
-		private static void testexisteOrganizacionConSiguienteNombre(ContenedorDatos Trabajos) {
-			System.out.println("---- TEST de existeOrganizacionConSiguienteNombre ----\n");
-			try {
-				String nombre = "Cents Ability, Inc.";
-				System.out.println("¿Existe una organizacion llamada " + nombre + "?: " + Trabajos.existeOrganizacionConSiguienteNombre(nombre));
-			}catch(Exception e) {
-				System.out.println("EXCEPCIÓN CAPTURADA!! " +e.getMessage());
-			}
+		private static void testexisteTrabajoEnFecha(ContenedorDatos Trabajos, LocalDate fecha) {
+			System.out.println("=============================");
+			System.out.println("Conjunto de pruebas sobre las funciones de ContenedorDatos");
+			System.out.println("=============================");
+			System.out.println("");	
+			System.out.println("==========FUNCION 1==========");
+			System.out.println("¿Existe algun trabajo realizado en la fecha " + fecha + "? : " + Trabajos.existeTrabajoEnFecha(fecha));
+			System.out.println("=============================");
+			System.out.println("");
+
+			
 		}
 		
 		private static void testNumeroTrabajosMasDe6Horas(ContenedorDatos Trabajos) {
-			System.out.println("---- TEST de getNumeroTrabajosMasDe6Horas ----\n");
-			try {
-				System.out.println("¿Cuantos Trabajos duran mas de 6 hora ?: " + Trabajos.getNumeroTrabajosMasDe6Horas());
-			}catch(Exception e) {
-				System.out.println("EXCEPCIÓN CAPTURADA!! " +e.getMessage());
-			}
+			System.out.println("==========FUNCION 2==========");
+			System.out.println("¿Cuantos trabajos tienen una duracion de mas de 6 horas? : " + Trabajos.NumeroTrabajosMasDe6Horas());
+			System.out.println("=============================");
+			System.out.println("");
 		}
 		
-		private static void testTrabajosPorCategoria(ContenedorDatos Trabajos) {
-			System.out.println("---- TEST de getTrabajosPorCategoria ----\n");
-
-			try {
-				CategoriaTrabajo cat = CategoriaTrabajo.Education;
-				System.out.println("¿Cuantos trabajos tienen la categoria " + cat + "?: " + Trabajos.getTrabajosPorCategoria(cat));
-			}catch(Exception e) {
-				System.out.println("EXCEPCIÓN CAPTURADA!! " +e.getMessage());
-			}
+		private static void testTrabajosTerminadosPorCualidades(ContenedorDatos Trabajos, List<String> cualidades) {
+			System.out.println("==========FUNCION 3==========");
+			System.out.println("A continuacion se muestra un trabajo que precise de las cualidades introducidas como parametro con la condicion de que debe estar finalizado : " + Trabajos.TrabajosTerminadosPorCualidades(cualidades));
+			System.out.println("=============================");
+			System.out.println("");
 		}
 		
-		private static void testagrupaTrabajosPorNumSol(ContenedorDatos Trabajos) {
-			System.out.println("---- TEST de agrupaTrabajosPorNumSol ----\n");
-
-			try {
-				Integer sol = 5;
-				System.out.println("Resumen de trabajos agrupados por numero de solicitudes: " + Trabajos.agrupaTrabajosPorNumSol(sol));
-			}catch(Exception e) {
-				System.out.println("EXCEPCIÓN CAPTURADA!! " +e.getMessage());
-			}
+		private static void testagrupaTrabajosPorNumSol(ContenedorDatos Trabajos, Integer solicitud) {
+			System.out.println("==========FUNCION 4==========");
+			System.out.println("Diccionario donde se muestran todos los trabajos cuyo numero de solicitudes sea en introducido : " + Trabajos.agrupaTrabajosPorNumSol(solicitud));
+			System.out.println("=============================");
+			System.out.println("");
 		}
 		
-		private static void testgetNumeroTrabajosPorCategoria(ContenedorDatos Trabajos) {
-			System.out.println("---- TEST de getNumeroTrabajosPorCategoria ----\n");
+		private static void testNumeroTrabajosPorCategoria(ContenedorDatos Trabajos) {
+			System.out.println("==========FUNCION 5==========");
+			System.out.println("Diccionario con los trabajos agrupados segun su categoria : " + Trabajos.NumeroTrabajosPorCategoria());
+			System.out.println("=============================");
+			System.out.println("");
+		}
 
-			try {
-				System.out.println("La cantidad de Trabajos que tiene cada categoria es la siguiente: " + Trabajos.getNumeroTrabajosPorCategoria());
-			}catch(Exception e) {
-				System.out.println("EXCEPCIÓN CAPTURADA!! " +e.getMessage());
-			}
-			
+		private static void testexisteTrabajoEnFechaStreams(ContenedorDatos Trabajos, LocalDate fecha ) {
+			System.out.println("==========FUNCION 6==========");
+			System.out.println("¿Existe algun trabajo realizado en la fecha " + fecha + "? : " + Trabajos.existeTrabajoEnFechaStreams(fecha));
+			System.out.println("=============================");
+			System.out.println("");
+		}	
+		
+		private static void testNumeroTrabajosMasDe6HorasStreams(ContenedorDatos Trabajos) {
+			System.out.println("==========FUNCION 7==========");
+			System.out.println("¿Cuantos trabajos tienen una duracion de mas de 6 horas? : " + Trabajos.numeroTrabajosMasDe6HorasStreams());
+			System.out.println("=============================");
+			System.out.println("");
+		}
+		
+		private static void testTrabajosTerminadosPorCualidadesStreams(ContenedorDatos Trabajos, List<String> cualidades) {
+			System.out.println("==========FUNCION 8==========");
+			System.out.println("A continuacion se muestra un trabajo que precise de las cualidades introducidas como parametro con la condicion de que debe estar finalizado : " + Trabajos.TrabajosTerminadosPorCualidadesStreams(cualidades));
+			System.out.println("=============================");
+			System.out.println("");
+		}
+		
+		private static void testobtenerTrabajoFinalizadoMejorPagado(ContenedorDatos Trabajos) {
+			System.out.println("==========FUNCION 9==========");
+			System.out.println("Se muestra el trabajo finalizado que ha sido mejor pagado : " + Trabajos.obtenerTrabajoFinalizadoMejorPagado());
+			System.out.println("=============================");
+			System.out.println("");
+		}
+		
+		private static void testobtenerTrabajosDuracion8HorasOrdenadosPorCantidadPagada(ContenedorDatos Trabajos) {
+			System.out.println("==========FUNCION 10=========");
+			System.out.println("Se muestran los trabajos que han durado al menos 8 horas ordenados de menor a mayor segun la cantidad pagada : " + Trabajos.obtenerTrabajosDuracion8HorasOrdenadosPorCantidadPagada());
+			System.out.println("=============================");
+			System.out.println("");
+		}
+		
+		private static void testNumeroTrabajosPorCategoriaStreams(ContenedorDatos Trabajos) {
+			System.out.println("==========FUNCION 11=========");
+			System.out.println("Diccionario con los trabajos agrupados segun su categoria : " + Trabajos.numeroTrabajosPorCategoriaStreams());
+			System.out.println("=============================");
+			System.out.println("");
+		}
+		
+		private static void testobtenerCantidadPagadaPorSolicitudes(ContenedorDatos Trabajos) {
+			System.out.println("==========FUNCION 12=========");
+			System.out.println("Diccionario con los trabajos agrupados por numero solicitudes donde las claves toman como valor las cantidades pagadas : " + Trabajos.obtenerCantidadPagadaPorSolicitudes());
+			System.out.println("=============================");
+			System.out.println("");
+		}
+		
+		private static void testobtenerTrabajosMejorPagadosPorTipo(ContenedorDatos Trabajos) {
+			System.out.println("==========FUNCION 13=========");
+			System.out.println("Diccionario con la mayor cantidad pagada segun la categoria del trabajo : " + Trabajos.obtenerTrabajosMejorPagadosPorTipo());
+			System.out.println("=============================");
+			System.out.println("");
+		}
+		
+		private static void testobtenerTrabajosMenosSolicitadosPorTipo(ContenedorDatos Trabajos) {
+			System.out.println("==========FUNCION 14=========");
+			System.out.println("Diccionario con los trabajos solicitados menos de 10 veces de cada tipo de trabajo : " + Trabajos.obtenerTrabajosMenosSolicitadosPorTipo());
+			System.out.println("=============================");
+			System.out.println("");
+		}
+		
+		private static void testobtenerTrabajoResumenMayorPorTipo(ContenedorDatos Trabajos) {
+			System.out.println("==========FUNCION 15=========");
+			System.out.println("Tipo de trabajo que cuenta con el resumen más largo, se indican el numero de caracteres del resumen : " + Trabajos.obtenerTrabajoResumenMayorPorTipo());
+			System.out.println("=============================");
+			System.out.println("");
 		}
 		
 }
